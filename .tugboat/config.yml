@@ -72,6 +72,10 @@ services:
 
       build: |
         set -eux
+        DRUPAL_COMPOSER_ROOT="/var/www/drupal"
+        DRUPAL_DOCROOT="/var/www/drupal/web"
+        COMPOSER_MEMORY_LIMIT=-1
+
         cd $DRUPAL_COMPOSER_ROOT
         composer install --optimize-autoloader
         vendor/bin/drush --yes updb
