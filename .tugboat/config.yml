@@ -1,0 +1,53 @@
+services:
+  php:
+    image: tugboatqa/drupal:10.4
+    default: true
+    http: false
+    depends: mysql
+    commands:
+      init: |
+        # Install ImageMagick.
+        apt-get update
+        apt-get install -y imagemagick
+
+      update: |
+        set -eux
+        cd $DRUPAL_COMPOSER_ROOT
+        composer config minimum-stability dev
+
+        # Increase memory
+        echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/tugboat.ini
+
+        # Install Drupal on the site.
+        vendor/bin/drush \
+          --yes \
+          --db-url=mysql://tugboat:tugboat@mysql:3306/tugboat \
+          --site-name="Live preview for ${TUGBOAT_PREVIEW_NAME}" \
+          --account-pass=admin \
+          site:install standard
+        echo "\$settings['trusted_host_patterns'] = ['\.tugboatqa\.com\$'];" >> $DOCROOT/sites/default/settings.php
+        mkdir -p $DRUPAL_DOCROOT/sites/default/files
+        chgrp -R www-data $DRUPAL_DOCROOT/sites/default/files
+        chmod 2775 $DRUPAL_DOCROOT/sites/default/files
+        chmod -R g+w $DRUPAL_DOCROOT/sites/default/files
+
+        # Install drupal/core-recipe-unpack
+        composer require drupal/core-recipe-unpack
+
+        # Add our recipe as a composer path repository, so that it can be
+        # added with composer require.
+        composer config repositories.placeholder-glossary --json "{\"type\": \"path\", \"url\": \"$TUGBOAT_ROOT\"}"
+        composer require lullabot/placeholder-glossary:*
+
+        # Apply the recipe.
+        cd $DRUPAL_COMPOSER_ROOT/web
+        php core/scripts/drupal recipe $TUGBOAT_ROOT -v
+
+      build: |
+        set -eux
+        cd $DRUPAL_COMPOSER_ROOT
+        composer install --optimize-autoloader
+        vendor/bin/drush --yes updb
+        vendor/bin/drush cache:rebuild
+  mysql:
+    image: tugboatqa/mariadb
