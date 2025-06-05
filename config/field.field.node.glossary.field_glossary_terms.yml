@@ -1,0 +1,21 @@
+uuid: 218b661a-35c3-4b69-8e27-1ab4cd33906b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_glossary_terms
+    - node.type.glossary
+  module:
+    - key_value_field
+id: node.glossary.field_glossary_terms
+field_name: field_glossary_terms
+entity_type: node
+bundle: glossary
+label: Terms
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: key_value

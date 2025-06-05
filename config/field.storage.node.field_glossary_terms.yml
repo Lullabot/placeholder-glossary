@@ -1,0 +1,24 @@
+uuid: f1defb43-6cc2-4fb4-a8b8-a20f2f54a2ff
+langcode: en
+status: true
+dependencies:
+  module:
+    - key_value_field
+    - node
+id: node.field_glossary_terms
+field_name: field_glossary_terms
+entity_type: node
+type: key_value
+settings:
+  key_max_length: 255
+  key_is_ascii: false
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: key_value_field
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

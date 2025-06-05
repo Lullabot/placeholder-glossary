@@ -1,0 +1,36 @@
+name: 'Placeholder - Glossary'
+description: 'Enables a glossary feature to allow glossary enty and automatic term highlighting on content.'
+type: 'Site'
+recipes:
+  - core/recipes/article_content_type
+install:
+  - key_value_glossary
+config:
+  import:
+    key_value_field: "*"
+  actions:
+    core.entity_form_display.node.article.default:
+      setComponents:
+        - name: field_glossaries
+          options:
+            type: entity_reference_autocomplete
+            weight: 3
+            region: content
+            settings:
+              match_operator: CONTAINS
+              match_limit: 10
+              size: 60
+              placeholder: ''
+            third_party_settings: {}
+    key_value_glossary.settings:
+      simpleConfigUpdate:
+        glossary_fields:
+          -
+            entity_type: node
+            bundle: glossary
+            field_name: field_glossary_terms
+        glossary_reference_fields:
+          -
+            entity_type: node
+            bundle: article
+            field_name: field_glossaries

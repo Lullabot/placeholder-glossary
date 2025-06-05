@@ -1,0 +1,21 @@
+{
+    "name": "lullabot/placeholder-glossary",
+    "description": "Enables a glossary feature to allow glossary entity and automatic term highlighting on content.",
+    "keywords": [
+        "recipe",
+        "Drupal recipes",
+        "drupal recipe"
+    ],
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Matt Oliveira",
+            "homepage": "https://lullabot.com",
+            "role": "Maintainer"
+        }
+    ],
+    "require": {
+        "drupal/key_value_glossary": "^1.0"
+    }
+}
