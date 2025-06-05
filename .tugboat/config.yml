@@ -1,11 +1,33 @@
 services:
   php:
-    image: tugboatqa/drupal:10.4
+    image: tugboatqa/php:8.3-apache
     default: true
     http: false
     depends: mysql
     commands:
       init: |
+        # Repeat the steps from https://github.com/TugboatQA/drupal/blob/main/Dockerfile
+        # We have to do this b/c we're depending on the tugboatqa/php:8.3-apache
+        # directly instead of tugboatqa/drupal:10.4 b/c that image is pinned to
+        # PHP 8.1 and we need at least PHP 8.3.
+        DRUPAL_COMPOSER_ROOT="/var/www/drupal"
+        DRUPAL_DOCROOT="/var/www/drupal/web"
+        COMPOSER_MEMORY_LIMIT=-1
+
+        set -x && apt-get update
+        apt-get -y install libzip-dev
+        apt-get clean
+        docker-php-ext-install zip
+        docker-php-ext-install opcache
+        a2enmod headers rewrite
+        composer create-project drupal/recommended-project:10.4 $DRUPAL_COMPOSER_ROOT
+        cd $DRUPAL_COMPOSER_ROOT
+        composer require drush/drush --with-all-dependencies
+        mkdir -p $DRUPAL_DOCROOT/sites/default/files
+        chgrp www-data $DRUPAL_DOCROOT/sites/default/files
+        chmod 2775 $DRUPAL_DOCROOT/sites/default/files
+        ln -snf $DRUPAL_DOCROOT $DOCROOT
+
         # Install ImageMagick.
         apt-get update
         apt-get install -y imagemagick
