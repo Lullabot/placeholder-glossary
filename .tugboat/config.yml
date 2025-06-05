@@ -58,6 +58,7 @@ services:
         chmod -R g+w $DRUPAL_DOCROOT/sites/default/files
 
         # Install drupal/core-recipe-unpack
+        composer config --no-plugins -n allow-plugins.drupal/core-recipe-unpack true
         composer require drupal/core-recipe-unpack
 
         # Add our recipe as a composer path repository, so that it can be
